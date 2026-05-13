@@ -1,0 +1,1092 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASSAM TEA — Ancient Wisdom Inside</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --amber: rgba(245,158,11,1);
+      --amber-dim: rgba(245,158,11,0.9);
+      --amber-faint: rgba(245,158,11,0.15);
+      --amber-bar: rgba(245,158,11,0.8);
+      --ink: #030303;
+      --white: #ffffff;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Inter', system-ui, sans-serif;
+    }
+    html { scroll-behavior: auto; }
+    body {
+      background: var(--ink);
+      color: var(--white);
+      font-family: var(--sans);
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ─── LOADING SCREEN ───────────────────────────── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--ink);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      transition: opacity 0.8s ease;
+    }
+    #loader.hidden { opacity: 0; pointer-events: none; }
+    #loader-title {
+      font-family: var(--serif);
+      font-size: 48px;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      color: var(--amber);
+      text-transform: uppercase;
+    }
+    #loader-bar-wrap {
+      width: 200px;
+      height: 1px;
+      background: rgba(245,158,11,0.18);
+      position: relative;
+      overflow: hidden;
+    }
+    #loader-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--amber-bar);
+      transition: width 0.1s linear;
+    }
+    #loader-hint {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: rgba(245,158,11,0.35);
+      text-transform: lowercase;
+    }
+
+    /* ─── FIXED HEADER ─────────────────────────────── */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      z-index: 200;
+      pointer-events: none;
+    }
+    #header-logo {
+      font-family: var(--serif);
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      color: var(--amber);
+      text-transform: uppercase;
+    }
+    #header-shop {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      pointer-events: all;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    #header-shop:hover { color: var(--amber); }
+
+    /* ─── SCROLL PROGRESS BAR ──────────────────────── */
+    #scroll-progress {
+      position: fixed;
+      top: 0; right: 0;
+      width: 2px;
+      height: 100vh;
+      background: var(--amber-faint);
+      z-index: 100;
+    }
+    #scroll-progress-fill {
+      width: 100%;
+      height: 0%;
+      background: var(--amber-bar);
+      transition: height 0.05s linear;
+    }
+
+    /* ─── HERO — VIDEO SCROLL SECTION ─────────────── */
+    #hero {
+      position: relative;
+      height: 800vh;
+    }
+    #hero-sticky {
+      position: sticky;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #video-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ─── TEXT OVERLAYS ────────────────────────────── */
+    .overlay {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    /* Overlay 1: Brand name */
+    #overlay-brand {
+      top: 14%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      white-space: nowrap;
+    }
+    #overlay-brand span {
+      display: block;
+      font-family: var(--serif);
+      font-size: clamp(64px, 9vw, 120px);
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--amber-dim);
+      text-transform: uppercase;
+    }
+
+    /* Overlay 2: Tagline word-by-word */
+    #overlay-tagline {
+      bottom: 15%;
+      left: 8%;
+      max-width: 520px;
+    }
+    #overlay-tagline .line {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.3;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 0.32em;
+    }
+    #overlay-tagline .word {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      display: inline-block;
+    }
+    #overlay-tagline .word.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Overlay 3: Blend ingredients */
+    #overlay-blend {
+      bottom: 15%;
+      left: 8%;
+      max-width: 600px;
+    }
+    #overlay-blend .blend-title {
+      font-family: var(--serif);
+      font-size: clamp(11px, 1vw, 13px);
+      letter-spacing: 0.22em;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.1s;
+    }
+    #overlay-blend.visible .blend-title { opacity: 1; }
+    #overlay-blend .blend-list {
+      font-family: var(--serif);
+      font-size: clamp(32px, 3.5vw, 52px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.25;
+    }
+    #overlay-blend .blend-item {
+      opacity: 0;
+      transform: translateX(-16px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      display: block;
+    }
+    #overlay-blend .blend-item.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Overlay 4: Origin story */
+    #overlay-origin {
+      top: 50%;
+      right: 8%;
+      transform: translateY(-50%);
+      text-align: right;
+      max-width: 340px;
+    }
+    #overlay-origin .origin-eyebrow {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    #overlay-origin .origin-text {
+      font-family: var(--serif);
+      font-size: clamp(22px, 2.2vw, 32px);
+      font-weight: 300;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.82);
+    }
+    #overlay-origin .origin-line {
+      width: 1px;
+      height: 48px;
+      background: var(--amber);
+      opacity: 0.5;
+      margin-left: auto;
+      margin-top: 20px;
+    }
+
+    /* Overlay 5: Harvest season */
+    #overlay-harvest {
+      top: 12%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      white-space: nowrap;
+    }
+    #overlay-harvest .harvest-year {
+      font-family: var(--serif);
+      font-size: clamp(80px, 14vw, 180px);
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: rgba(245,158,11,0.20);
+      line-height: 1;
+      display: block;
+      user-select: none;
+    }
+    #overlay-harvest .harvest-label {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      color: rgba(245,158,11,0.7);
+      text-transform: uppercase;
+      margin-top: -12px;
+      display: block;
+    }
+
+    /* Decorative corner marks */
+    .corner-mark {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+    .corner-mark.tl { top: 24px; left: 24px; border-top: 1px solid var(--amber); border-left: 1px solid var(--amber); }
+    .corner-mark.tr { top: 24px; right: 24px; border-top: 1px solid var(--amber); border-right: 1px solid var(--amber); }
+    .corner-mark.bl { bottom: 24px; left: 24px; border-bottom: 1px solid var(--amber); border-left: 1px solid var(--amber); }
+    .corner-mark.br { bottom: 24px; right: 24px; border-bottom: 1px solid var(--amber); border-right: 1px solid var(--amber); }
+
+    /* ─── AFTER HERO — PRODUCT SECTION ────────────── */
+    #products {
+      background: var(--ink);
+      padding: 140px 8% 100px;
+      position: relative;
+    }
+    #products::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(245,158,11,0.3), transparent);
+    }
+    .section-eyebrow {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-eyebrow::after {
+      content: '';
+      flex: 0 0 48px;
+      height: 1px;
+      background: var(--amber);
+      opacity: 0.4;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(40px, 5vw, 72px);
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.1;
+      max-width: 480px;
+      margin-bottom: 80px;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2px;
+      max-width: 1200px;
+    }
+    .product-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(245,158,11,0.08);
+      padding: 48px 36px 40px;
+      cursor: pointer;
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1),
+                  box-shadow 0.4s cubic-bezier(0.16,1,0.3,1),
+                  border-color 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(245,158,11,0.04) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 32px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(245,158,11,0.3);
+      border-color: rgba(245,158,11,0.3);
+    }
+    .product-card:hover::before { opacity: 1; }
+    .product-number {
+      font-family: var(--serif);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: rgba(245,158,11,0.4);
+      margin-bottom: 32px;
+    }
+    .product-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 28px;
+      opacity: 0.7;
+    }
+    .product-name {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .product-sub {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: rgba(245,158,11,0.6);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .product-desc {
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 32px;
+    }
+    .product-price {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--amber);
+    }
+    .product-cta {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+      margin-top: 8px;
+      transition: color 0.3s;
+    }
+    .product-card:hover .product-cta { color: rgba(245,158,11,0.8); }
+    .product-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  object-position: center top;
+  margin-bottom: 28px;
+  border: 1px solid rgba(245,158,11,0.1);
+  filter: brightness(0.92);
+  transition: filter 0.4s ease;
+}
+.product-card:hover .product-img {
+  filter: brightness(1.05);
+}
+.ritual-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border: 1px solid rgba(245,158,11,0.12);
+  filter: brightness(0.85);
+  transition: filter 0.4s ease;
+}
+.ritual-visual:hover .ritual-img {
+  filter: brightness(1);
+}
+    /* ─── RITUAL SECTION ───────────────────────────── */
+    #ritual {
+      padding: 140px 8%;
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .ritual-visual {
+      position: relative;
+      height: 560px;
+    }
+    .ritual-box {
+      position: absolute;
+      border: 1px solid rgba(245,158,11,0.15);
+    }
+    .ritual-box-1 {
+      inset: 0 60px 60px 0;
+      background: rgba(245,158,11,0.03);
+    }
+    .ritual-box-2 {
+      top: 40px; left: 40px; right: 20px; bottom: 20px;
+      background: rgba(245,158,11,0.04);
+      border-color: rgba(245,158,11,0.08);
+    }
+    .ritual-number-big {
+      position: absolute;
+      bottom: -20px; right: -20px;
+      font-family: var(--serif);
+      font-size: 200px;
+      font-weight: 300;
+      color: rgba(245,158,11,0.05);
+      line-height: 1;
+      user-select: none;
+    }
+    .ritual-text { }
+    .ritual-steps {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .ritual-step {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding-bottom: 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .ritual-step:last-child { border-bottom: none; }
+    .ritual-step-num {
+      font-family: var(--serif);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: rgba(245,158,11,0.4);
+      min-width: 28px;
+      padding-top: 3px;
+    }
+    .ritual-step-title {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 8px;
+    }
+    .ritual-step-desc {
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* ─── NEWSLETTER ───────────────────────────────── */
+    #newsletter {
+      padding: 140px 8%;
+      text-align: center;
+      border-top: 1px solid rgba(245,158,11,0.06);
+    }
+    .nl-eyebrow {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .nl-title {
+      font-family: var(--serif);
+      font-size: clamp(48px, 6vw, 80px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    .nl-subtitle {
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.35);
+      max-width: 440px;
+      margin: 0 auto 48px;
+    }
+    .nl-form {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .nl-input {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-right: none;
+      padding: 14px 20px;
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--white);
+      outline: none;
+    }
+    .nl-input::placeholder { color: rgba(255,255,255,0.2); }
+    .nl-btn {
+      background: var(--amber);
+      border: none;
+      padding: 14px 28px;
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--ink);
+      text-transform: uppercase;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+    .nl-btn:hover { background: rgba(245,158,11,0.85); }
+
+    /* ─── FOOTER ───────────────────────────────────── */
+    footer {
+      padding: 60px 8% 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-top: 1px solid rgba(245,158,11,0.06);
+    }
+    .footer-logo {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: rgba(245,158,11,0.6);
+      text-transform: uppercase;
+    }
+    .footer-text {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: rgba(232, 240, 3, 0.909);
+    }
+    .footer-origin {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 13px;
+      color: rgba(245, 159, 11, 0.900);
+    }
+
+    /* ─── MARQUEE ───────────────────────────────────── */
+    #marquee-wrap {
+      overflow: hidden;
+      border-top: 1px solid rgba(245,158,11,0.08);
+      border-bottom: 1px solid rgba(245,158,11,0.08);
+      padding: 18px 0;
+      background: rgba(245,158,11,0.02);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      width: max-content;
+      animation: marquee 28s linear infinite;
+    }
+    .marquee-item {
+      font-family: var(--serif);
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      color: rgba(245,158,11,0.5);
+      text-transform: uppercase;
+      padding: 0 48px;
+      white-space: nowrap;
+    }
+    .marquee-item::after {
+      content: '·';
+      margin-left: 48px;
+      opacity: 0.3;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ─── GSAP SCROLL ANIMATIONS ───────────────────── */
+    .gs-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loader">
+    <div id="loader-title">Assam Tea</div>
+    <div id="loader-bar-wrap">
+      <div id="loader-bar-fill"></div>
+    </div>
+    <div id="loader-hint">preparing your ritual …</div>
+  </div>
+
+  <!-- FIXED HEADER -->
+  <header id="header">
+    <div id="header-logo">Assam Tea</div>
+    <div id="header-shop">Shop</div>
+  </header>
+
+  <!-- SCROLL PROGRESS BAR -->
+  <div id="scroll-progress">
+    <div id="scroll-progress-fill"></div>
+  </div>
+
+  <!-- ═══ HERO — SCROLL VIDEO SECTION ═══ -->
+  <section id="hero">
+    <div id="hero-sticky">
+      <canvas id="video-canvas"></canvas>
+
+      <!-- Decorative corner marks -->
+      <div class="corner-mark tl" id="cm-tl"></div>
+      <div class="corner-mark tr" id="cm-tr"></div>
+      <div class="corner-mark bl" id="cm-bl"></div>
+      <div class="corner-mark br" id="cm-br"></div>
+
+      <!-- Overlay 1: Brand title -->
+      <div class="overlay" id="overlay-brand">
+        <span>Assam Tea</span>
+      </div>
+
+      <!-- Overlay 2: Tagline -->
+      <div class="overlay" id="overlay-tagline">
+        <div class="line" id="tagline-words"></div>
+      </div>
+
+      <!-- Overlay 3: Blend ingredients -->
+      <div class="overlay" id="overlay-blend">
+        <div class="blend-title">The Signature Blend</div>
+        <div class="blend-list">
+          <span class="blend-item" data-index="0">Ashwagandha.</span>
+          <span class="blend-item" data-index="1">Rose.</span>
+          <span class="blend-item" data-index="2">Lavender.</span>
+          <span class="blend-item" data-index="3">White tea.</span>
+        </div>
+      </div>
+
+      <!-- Overlay 4: Origin story -->
+      <div class="overlay" id="overlay-origin">
+        <div class="origin-eyebrow">Est. 1823 · Brahmaputra Valley</div>
+        <div class="origin-text">Where mist meets<br/>ancient soil, every<br/>leaf holds memory.</div>
+        <div class="origin-line"></div>
+      </div>
+
+      <!-- Overlay 5: Harvest year -->
+      <div class="overlay" id="overlay-harvest">
+        <span class="harvest-year">2026</span>
+        <span class="harvest-label">First Flush · Spring Harvest</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ MARQUEE ═══ -->
+  <div id="marquee-wrap">
+    <div class="marquee-track" id="marquee-track"></div>
+  </div>
+
+  <!-- ═══ PRODUCTS ═══ -->
+  <section id="products">
+    <div class="section-eyebrow">The Collection</div>
+    <h2 class="section-title gs-reveal">Crafted for the discerning palate.</h2>
+    <div class="products-grid">
+
+      <div class="product-card gs-reveal" style="transition-delay:0.05s">
+        <div class="product-number">No. 01</div>
+        <img src="tea1.png" alt="First Flush Darjeeling" class="product-img" />
+        <div class="product-name">First Flush<br/>Darjeeling</div>
+        <div class="product-sub">Spring · Light Body</div>
+        <div class="product-desc">Delicate muscatel notes with floral undertones. Harvested at dawn in the foothills of the Himalayas.</div>
+        <div class="product-price">₹ 2,400</div>
+        <div class="product-cta">Add to Ritual →</div>
+      </div>
+
+      <div class="product-card gs-reveal" style="transition-delay:0.12s">
+        <div class="product-number">No. 02</div>
+        <img src="tea2.png" alt="Golden Assam Reserve" class="product-img" />
+        <div class="product-name">Golden Assam<br/>Reserve</div>
+        <div class="product-sub">Autumn · Bold Body</div>
+        <div class="product-desc">Full-bodied malt with rich amber liquor. The pride of Brahmaputra Valley since the colonial era.</div>
+        <div class="product-price">₹ 1,800</div>
+        <div class="product-cta">Add to Ritual →</div>
+      </div>
+
+      <div class="product-card gs-reveal" style="transition-delay:0.19s">
+        <div class="product-number">No. 03</div>
+        <img src="tea3.png" alt="Wellness Ceremonial Blend" class="product-img" />
+        <div class="product-name">Wellness<br/>Ceremonial Blend</div>
+        <div class="product-sub">Anytime · Adaptogenic</div>
+        <div class="product-desc">Ashwagandha, rose, lavender & white tea. Ancient Ayurvedic wisdom bottled for the modern ritual.</div>
+        <div class="product-price">₹ 3,200</div>
+        <div class="product-cta">Add to Ritual →</div>
+      </div>
+
+      <div class="product-card gs-reveal" style="transition-delay:0.26s">
+        <div class="product-number">No. 04</div>
+        <img src="tea4.png" alt="Silver Needle White Tea" class="product-img" />
+        <div class="product-name">Silver Needle<br/>White Tea</div>
+        <div class="product-sub">Morning · Ethereal</div>
+        <div class="product-desc">Hand-picked before sunrise. Only the finest silver-tipped buds, dried in the mountain air.</div>
+        <div class="product-price">₹ 4,100</div>
+        <div class="product-cta">Add to Ritual →</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ RITUAL SECTION ═══ -->
+  <section id="ritual">
+    <div class="ritual-visual gs-reveal">
+      <img src="ritual.png" alt="Tea Ritual" class="ritual-img" />
+      <div class="ritual-number-big">三</div>
+  </div>
+    <div class="ritual-text">
+      <div class="section-eyebrow gs-reveal">The Ritual</div>
+      <h2 class="section-title gs-reveal" style="margin-bottom: 0">Patience is the first ingredient.</h2>
+      <div class="ritual-steps">
+        <div class="ritual-step gs-reveal">
+          <div class="ritual-step-num">01</div>
+          <div class="ritual-step-content">
+            <div class="ritual-step-title">Heat to 85°C</div>
+            <div class="ritual-step-desc">Never boiling. Water too hot destroys the delicate catechins and the subtle floral notes that define a true Assam.</div>
+          </div>
+        </div>
+        <div class="ritual-step gs-reveal">
+          <div class="ritual-step-num">02</div>
+          <div class="ritual-step-content">
+            <div class="ritual-step-title">Steep for 3 minutes</div>
+            <div class="ritual-step-desc">Use 2 grams per 150ml. Allow the leaves to unfurl completely — watch the amber bloom into the water.</div>
+          </div>
+        </div>
+        <div class="ritual-step gs-reveal">
+          <div class="ritual-step-num">03</div>
+          <div class="ritual-step-content">
+            <div class="ritual-step-title">Presence</div>
+            <div class="ritual-step-desc">Put the phone down. This cup took 200 years to arrive at your hands. Give it a moment.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ NEWSLETTER ═══ -->
+  <section id="newsletter">
+    <div class="nl-eyebrow">The Inner Circle</div>
+    <h2 class="nl-title gs-reveal">Letters from<br/>the garden.</h2>
+    <p class="nl-subtitle gs-reveal">Harvest notes, seasonal releases, and the lore of Assam — delivered quietly, never noisily.</p>
+    <div class="nl-form gs-reveal">
+      <input class="nl-input" type="email" placeholder="your@email.com" />
+      <button class="nl-btn">Join</button>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="footer-logo">Assam Tea</div>
+    <div class="footer-text">© 2026 · Made from &#10084 by Sayan, India</div>
+    <div class="footer-origin">Grown with intention. Served with ceremony.</div>
+  </footer>
+
+  <!-- ─── GSAP CDN ─────────────────────────────────── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+ <script>
+(function() {
+  'use strict';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const loader         = document.getElementById('loader');
+  const loaderFill     = document.getElementById('loader-bar-fill');
+  const canvas         = document.getElementById('video-canvas');
+  const ctx            = canvas.getContext('2d');
+  const progressFill   = document.getElementById('scroll-progress-fill');
+  const overlayBrand   = document.getElementById('overlay-brand');
+  const overlayTagline = document.getElementById('overlay-tagline');
+  const overlayBlend   = document.getElementById('overlay-blend');
+  const overlayOrigin  = document.getElementById('overlay-origin');
+  const overlayHarvest = document.getElementById('overlay-harvest');
+  const cornerMarks    = document.querySelectorAll('.corner-mark');
+
+  function resizeCanvas() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  // ─── MARQUEE ─────────────────────────────────────
+  const marqueeItems = [
+    'First Flush', 'Brahmaputra Valley', 'Single Origin', 'Hand Picked',
+    'Est. 1823', 'Golden Tips', 'Spring Harvest', 'Ancient Wisdom',
+    'First Flush', 'Brahmaputra Valley', 'Single Origin', 'Hand Picked',
+    'Est. 1823', 'Golden Tips', 'Spring Harvest', 'Ancient Wisdom'
+  ];
+  const track = document.getElementById('marquee-track');
+  marqueeItems.forEach(t => {
+    const span = document.createElement('span');
+    span.className = 'marquee-item';
+    span.textContent = t;
+    track.appendChild(span);
+  });
+
+  // ─── TAGLINE WORDS ───────────────────────────────
+  const taglineText = 'A single leaf. Ancient wisdom inside.';
+  const taglineContainer = document.getElementById('tagline-words');
+  taglineText.split(' ').forEach(w => {
+    const span = document.createElement('span');
+    span.className = 'word';
+    span.textContent = w;
+    taglineContainer.appendChild(span);
+  });
+
+  // ─── FALLBACK CANVAS ─────────────────────────────
+  function drawFallback(progress) {
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    const grad = ctx.createRadialGradient(w*0.5, h*0.4, 0, w*0.5, h*0.4, w*0.8);
+    grad.addColorStop(0, 'rgba(245,158,11,' + (0.04 + (progress||0) * 0.08) + ')');
+    grad.addColorStop(1, 'rgba(3,3,3,1)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  // ─── VIDEO SETUP ─────────────────────────────────
+  const video = document.createElement('video');
+  video.src         = '/tea-story-final.mp4';
+  video.muted       = true;
+  video.playsInline = true;
+  video.preload     = 'auto';
+  video.style.display = 'none';
+  document.body.appendChild(video);
+
+  // ─── FRAME CAPTURE VIA PLAYBACK (fast!) ──────────
+  const OFFSCREEN_W = 960;
+  const OFFSCREEN_H = 540;
+  const QUALITY     = 0.75;
+  const TARGET_FPS  = 10;
+
+  let frames = [];
+
+  const offscreen = document.createElement('canvas');
+  offscreen.width  = OFFSCREEN_W;
+  offscreen.height = OFFSCREEN_H;
+  const offCtx = offscreen.getContext('2d');
+
+  function captureFramesDuringPlayback() {
+    return new Promise(resolve => {
+      video.addEventListener('loadedmetadata', () => {
+        const duration   = video.duration;
+        const totalFrames = Math.floor(duration * TARGET_FPS);
+        const interval   = 1 / TARGET_FPS;
+
+        let nextCapture  = 0;
+        let captured     = 0;
+
+        // Play at 4x speed to capture faster
+        video.playbackRate = 4.0;
+        video.currentTime  = 0;
+
+        function onTimeUpdate() {
+          // Capture every interval
+          while (video.currentTime >= nextCapture - 0.01 && nextCapture <= duration + 0.01) {
+            offCtx.drawImage(video, 0, 0, OFFSCREEN_W, OFFSCREEN_H);
+            const img = new Image();
+            img.src = offscreen.toDataURL('image/jpeg', QUALITY);
+            frames.push(img);
+            captured++;
+            nextCapture += interval;
+
+            const pct = Math.min(100, Math.round((captured / totalFrames) * 100));
+            loaderFill.style.width = pct + '%';
+          }
+
+          if (video.currentTime >= duration - 0.1) {
+            video.removeEventListener('timeupdate', onTimeUpdate);
+            video.pause();
+            resolve();
+          }
+        }
+
+        video.addEventListener('timeupdate', onTimeUpdate);
+        video.play().catch(() => {
+          // Autoplay blocked — fall back to seek method but at low fps
+          video.removeEventListener('timeupdate', onTimeUpdate);
+          resolve(); // just show page with fallback
+        });
+
+      }, { once: true });
+
+      video.load();
+    });
+  }
+
+  // ─── DRAW FRAME ──────────────────────────────────
+  function drawFrame(progress) {
+    if (!frames.length) { drawFallback(progress); return; }
+    const idx = Math.min(frames.length - 1, Math.floor(progress * frames.length));
+    const img = frames[idx];
+    if (!img || !img.complete) { drawFallback(progress); return; }
+    const sw = canvas.width, sh = canvas.height;
+    const iw = img.naturalWidth  || OFFSCREEN_W;
+    const ih = img.naturalHeight || OFFSCREEN_H;
+    const ratio = Math.max(sw/iw, sh/ih);
+    const dw = iw*ratio, dh = ih*ratio;
+    ctx.clearRect(0, 0, sw, sh);
+    ctx.drawImage(img, (sw-dw)/2, (sh-dh)/2, dw, dh);
+  }
+
+  // ─── SCROLL ──────────────────────────────────────
+  let rafPending   = false;
+  let lastProgress = 0;
+
+  function onScroll() {
+    const hero       = document.getElementById('hero');
+    const heroTop    = hero.getBoundingClientRect().top + window.scrollY;
+    const heroHeight = hero.scrollHeight - window.innerHeight;
+    const scrollY    = window.scrollY;
+
+    const totalScroll = document.body.scrollHeight - window.innerHeight;
+    progressFill.style.height = ((scrollY / totalScroll) * 100) + '%';
+
+    const heroProgress = Math.max(0, Math.min(1, (scrollY - heroTop) / heroHeight));
+
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(() => {
+        rafPending = false;
+        lastProgress = heroProgress;
+        drawFrame(heroProgress);
+        updateOverlays(heroProgress);
+      });
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // ─── OVERLAYS ────────────────────────────────────
+  function remap(v, a, b) { return Math.max(0, Math.min(1, (v-a)/(b-a))); }
+
+  const taglineWordEls = taglineContainer.querySelectorAll('.word');
+  const blendItems     = overlayBlend.querySelectorAll('.blend-item');
+
+  function updateOverlays(p) {
+    const brand_in  = remap(p, 0.03, 0.07);
+    const brand_out = remap(p, 0.13, 0.16);
+    overlayBrand.style.opacity = brand_in * (1 - brand_out);
+    cornerMarks.forEach(m => m.style.opacity = brand_in * (1 - brand_out));
+
+    const tag_in  = remap(p, 0.08, 0.10);
+    const tag_out = remap(p, 0.22, 0.26);
+    overlayTagline.style.opacity = tag_in * (1 - tag_out);
+    taglineWordEls.forEach((w, i) => {
+      const t = remap(p, 0.09 + i*0.008, 0.12 + i*0.008);
+      if (t > 0.5) w.classList.add('visible'); else w.classList.remove('visible');
+    });
+
+    const blend_in  = remap(p, 0.28, 0.31);
+    const blend_out = remap(p, 0.44, 0.49);
+    overlayBlend.style.opacity = blend_in * (1 - blend_out);
+    if (blend_in > 0.3) overlayBlend.classList.add('visible');
+    else overlayBlend.classList.remove('visible');
+    blendItems.forEach((item, i) => {
+      const t = remap(p, 0.30 + i*0.025, 0.34 + i*0.025);
+      if (t > 0.5) item.classList.add('visible'); else item.classList.remove('visible');
+    });
+
+    const origin_in  = remap(p, 0.52, 0.56);
+    const origin_out = remap(p, 0.68, 0.73);
+    overlayOrigin.style.opacity = origin_in * (1 - origin_out);
+
+    const harvest_in  = remap(p, 0.78, 0.82);
+    const harvest_out = remap(p, 0.91, 0.96);
+    overlayHarvest.style.opacity = harvest_in * (1 - harvest_out);
+  }
+
+  // ─── GSAP ─────────────────────────────────────────
+  function initGSAP() {
+    gsap.utils.toArray('.gs-reveal').forEach(el => {
+      gsap.to(el, {
+        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+  }
+
+  // ─── INIT ─────────────────────────────────────────
+  async function init() {
+    drawFallback(0);
+    await captureFramesDuringPlayback();
+    drawFrame(0);
+    loader.classList.add('hidden');
+    setTimeout(() => {
+      loader.style.display = 'none';
+      initGSAP();
+      onScroll();
+    }, 820);
+  }
+
+  init();
+
+})();
+</script>
+</body>
+</html>
