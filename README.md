@@ -30,6 +30,7 @@ GitHub
 Netlify
 
 Project Structure
+
 <img width="437" height="239" alt="image" src="https://github.com/user-attachments/assets/12d0af52-7114-4e14-a3a3-5191c4bff950" />
 
 
